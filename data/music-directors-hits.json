@@ -2,6 +2,7 @@
     {
         "id": 1,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=A.R.Rahman%20Hits-1%20(Soulful%20Melodies)",
+        "path": "https://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Anirudh%20Ravichander%20Hits/",
         "name": "A.R.Rahman Hits-1 (Soulful Melodies)"
     },
     {
@@ -52,6 +53,7 @@
     {
         "id": 11,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Harish%20Jeyaraj%20Hits",
+        "path": "http://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Harish%20Jeyaraj%20Hits/",
         "name": "Harish Jeyaraj Hits"
     },
     {
@@ -122,26 +124,31 @@
     {
         "id": 25,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Vidhyasagar%20Hits",
+        "path": "https://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Vidhyasagar%20Hits/",
         "name": "Vidhyasagar Hits"
     },
     {
         "id": 26,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Vijay%20Antony%20Hits",
+        "path": "http://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Vijay%20Antony%20Hits/",
         "name": "Vijay Antony Hits"
     },
     {
         "id": 27,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Yuvan%20Shankar%20Raja%20Hits%201",
+        "path": "https://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Yuvan%20Shankar%20Raja%20Hits%201/",
         "name": "Yuvan Shankar Raja Hits 1"
     },
     {
         "id": 28,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Yuvan%20Shankar%20Raja%20Hits%202",
+        "path": "http://www.friendstamilmp3.in/songs2/Music%20Director%20Hits/Yuvan%20Shankar%20Raja%20Hits%202/",
         "name": "Yuvan Shankar Raja Hits 2"
     },
     {
         "id": 29,
         "href": "https://friendstamilmp3.in/index.php?page=Music%20Director%20Hits&spage=Yuvan%20Shankar%20Raja%20Hits%203",
+        "path": "",
         "name": "Yuvan Shankar Raja Hits 3"
     }
 ]
