@@ -1,0 +1,4 @@
+.idea
+
+# exclude output
+/output
