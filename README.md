@@ -1,6 +1,11 @@
 # Tamil Mp3 Downloader (In Single Click)
 Download thousands of High Quality MP3 (320kbps) in a single run. You can download specific songs based on their hits.
 
+### 🎼 [Mp3 Downloader Pro](https://github.com/anburocky3/mp3-downloader) (Latest & Its Free!)
+#### If you want to download songs in different language, checkout our latest project </br>
+
+  
+
 ### ✅ [Download this script](https://github.com/anburocky3/tamil-mp3-downloader/fork)
 
 > **Use this script with caution.** We don't support piracy and this project is completely for educational purposes only. Use it with care.🥰💖 
