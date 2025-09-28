@@ -1,4 +1,4 @@
-beautifulsoup4==4.12.2
+beautifulsoup4==4.14.0
 bs4==0.0.1
 clint==0.5.1
 
