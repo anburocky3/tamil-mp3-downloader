@@ -2,3 +2,5 @@
 
 # exclude output
 /output
+/tools
+/__pycache__/
