@@ -111,6 +111,68 @@ def show_and_download(index_url: str, category_name: str, save_subpath_default: 
     print(INFO_COLOR + ensure_emoji_spacing('-----------------------------------------------------------') + RESET)
 
 
+def handle_data_category(data_file: str, category_name: str):
+    """Load a JSON list of {id, href/path, name} and drive the same flow as Star Hits.
+
+    data_file: path to JSON file under data/
+    category_name: top-level category used for output path
+    """
+    try:
+        with open(data_file, 'r', encoding='utf-8') as f:
+            data_list = json.load(f)
+    except Exception as e:
+        print(ERROR_COLOR + f"Failed to load {data_file}: {e}" + RESET)
+        return
+
+    # Display list
+    print(MENU_COLOR + f"Available {category_name}:" + RESET)
+    for item in data_list:
+        print(f" {Fore.CYAN}{item.get('id')}{RESET}. {item.get('name')}")
+    print(f" {Fore.CYAN}all{RESET}. Download ALL entries")
+
+    sel = prompt_choice("Select number(s)/ranges (e.g. 1,3,5 or 2-4) or 'all' (back/exit): ")
+    if not sel:
+        print(ERROR_COLOR + "No selection made, returning to menu." + RESET)
+        return
+    if sel.lower() in ('back', 'b'):
+        return
+    if sel.lower() in ('exit', '0', 'quit'):
+        goodbye_and_exit()
+
+    selected_items, missing = parse_star_selection(sel, data_list)
+    for mid in missing:
+        print(ERROR_COLOR + f"No item with id {mid}, skipping." + RESET)
+    if not selected_items:
+        print(ERROR_COLOR + f"No valid selections found, returning to menu." + RESET)
+        return
+
+    for item in selected_items:
+        item_name = item.get('name')
+        # prefer 'href' then 'path'
+        index_url = item.get('href') or item.get('path')
+        if not index_url:
+            print(ERROR_COLOR + f"No URL for '{item_name}', skipping." + RESET)
+            continue
+
+        user_path = prompt_choice(f"Enter The Path To Save Files inside '{category_name}/{item_name}': (DEFAULT: {item_name}) (skip/back/exit): ", item_name)
+        if user_path.lower() in ('skip', 's'):
+            print(INFO_COLOR + f"Skipped {item_name}" + RESET)
+            continue
+        if user_path.lower() in ('back', 'b'):
+            break
+        if user_path.lower() in ('exit', '0', 'quit'):
+            goodbye_and_exit()
+
+        dir_path = Path(f'output/{category_name}/{user_path}')
+        print(INFO_COLOR + '----------------------------------------------')
+        print(INFO_COLOR + f' 🎼   Files will be saved to: {dir_path}')
+        print(INFO_COLOR + '----------------------------------------------' + RESET)
+        dir_path.mkdir(parents=True, exist_ok=True)
+
+        # Reuse show_and_download which fetches index, filters links and downloads
+        show_and_download(index_url, category_name, user_path)
+
+
 def main():
     while True:
         # Show banner and menu, get a valid choice
@@ -125,60 +187,15 @@ def main():
         category_name = CATEGORIES[choice]
         print(INFO_COLOR + f"Selected: {category_name}\n" + RESET)
 
-        # Special flow for Star Hits (choice == '2')
-        if choice == '2':
-            # Load data/star-hits.json
-            try:
-                with open('data/star-hits.json', 'r', encoding='utf-8') as f:
-                    star_data = json.load(f)
-            except Exception as e:
-                print(ERROR_COLOR + f"Failed to load star-hits.json: {e}" + RESET)
-                continue
-
-            # Display list
-            print(MENU_COLOR + "Available Star Hits:" + RESET)
-            for item in star_data:
-                print(f" {Fore.CYAN}{item.get('id')}{RESET}. {item.get('name')}")
-            print(f" {Fore.CYAN}all{RESET}. Download ALL entries")
-
-            sel = prompt_choice("Select number(s)/ranges (e.g. 1,3,5 or 2-4) or 'all' (back/exit): ")
-            if not sel:
-                print(ERROR_COLOR + "No selection made, returning to menu." + RESET)
-                continue
-            if sel.lower() in ('back', 'b'):
-                continue
-            if sel.lower() in ('exit', '0', 'quit'):
-                goodbye_and_exit()
-
-            selected_items, missing = parse_star_selection(sel, star_data)
-            for mid in missing:
-                print(ERROR_COLOR + f"No item with id {mid}, skipping." + RESET)
-            if not selected_items:
-                print(ERROR_COLOR + f"No valid selections found, returning to menu." + RESET)
-                continue
-
-            for item in selected_items:
-                item_name = item.get('name')
-                index_url = item.get('href')
-
-                user_path = prompt_choice(f"Enter The Path To Save Files inside '{category_name}/{item_name}': (DEFAULT: {item_name}) (skip/back/exit): ", item_name)
-                if user_path.lower() in ('skip', 's'):
-                    print(INFO_COLOR + f"Skipped {item_name}" + RESET)
-                    continue
-                if user_path.lower() in ('back', 'b'):
-                    break
-                if user_path.lower() in ('exit', '0', 'quit'):
-                    goodbye_and_exit()
-
-                dir_path = Path(f'output/{category_name}/{user_path}')
-                print(INFO_COLOR + '----------------------------------------------')
-                print(INFO_COLOR + f' 🎼  Files will be saved to: {dir_path}')
-                print(INFO_COLOR + '----------------------------------------------' + RESET)
-                dir_path.mkdir(parents=True, exist_ok=True)
-
-                # Reuse show_and_download which fetches index, filters links and downloads
-                show_and_download(index_url, category_name, user_path)
-
+        # Special flows for Star Hits (2), Music Director Hits (3) and Singer Hits (4)
+        if choice in ('2', '3', '4'):
+            mapping = {
+                '2': 'data/star-hits.json',
+                '3': 'data/music-directors-hits.json',
+                '4': 'data/singer-hits.json',
+            }
+            data_file = mapping.get(choice)
+            handle_data_category(data_file, category_name)
             continue
 
         # Generic flow for other categories
