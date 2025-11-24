@@ -94,7 +94,7 @@ def show_and_download(index_url: str, category_name: str, save_subpath_default: 
     audio_count = count_audio_hrefs(hrefs)
 
     print("")
-    print(INFO_COLOR + ensure_emoji_spacing(f"👋 I found {audio_count} audio links for {save_subpath_default}.\n") + RESET)
+    print(INFO_COLOR + ensure_emoji_spacing(f"👋  I found {audio_count} audio links for {save_subpath_default}.\n") + RESET)
 
     # build output directory
     out_dir = Path(f'output/{category_name}/{save_subpath_default}')
@@ -105,9 +105,9 @@ def show_and_download(index_url: str, category_name: str, save_subpath_default: 
     total_audio, successful, failed = download_links(hrefs, index_url, out_dir)
 
     print(INFO_COLOR + ensure_emoji_spacing('\n\n' + '-----------------------------------------------------------') + RESET)
-    print(INFO_COLOR + ensure_emoji_spacing(f'💁\u200d♂️ Total Downloadable files: {total_audio}') + RESET)
-    print(SUCCESS_COLOR + ensure_emoji_spacing(f'✅ Successful: {successful}') + RESET)
-    print(ERROR_COLOR + ensure_emoji_spacing(f"❌ Couldn't download: {failed}") + RESET)
+    print(INFO_COLOR + ensure_emoji_spacing(f'💁\u200d♂️  Total Downloadable files: {total_audio}') + RESET)
+    print(SUCCESS_COLOR + ensure_emoji_spacing(f'✅  Successful: {successful}') + RESET)
+    print(ERROR_COLOR + ensure_emoji_spacing(f"❌  Couldn't download: {failed}") + RESET)
     print(INFO_COLOR + ensure_emoji_spacing('-----------------------------------------------------------') + RESET)
 
 

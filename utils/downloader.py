@@ -2,9 +2,12 @@ from pathlib import Path
 import requests
 from urllib.parse import unquote
 from clint.textui import progress
+from colorama import Fore, Style
 
 AUDIO_EXTS = ('.wav', '.mp3', '.mp4', '.m4a', '.aac', '.flac')
 
+BLUE_COLOR = Fore.BLUE
+RESET = Style.RESET_ALL
 
 def _is_audio(href: str) -> bool:
     return bool(href) and href.lower().endswith(AUDIO_EXTS)
@@ -20,15 +23,15 @@ def download_links(links, base_url, out_dir: Path, chunk_size: int = 256):
 
     Returns: (total_audio, success_count, failed_count)
     """
-    total_audio = 0
+    # Normalize links to a list so we can count and enumerate audio files
+    link_list = list(links)
+    audio_links = [h for h in link_list if _is_audio(h)]
+    total_audio = len(audio_links)
     success = 0
     failed = 0
 
-    for href in links:
-        if not _is_audio(href):
-            continue
-        total_audio += 1
-
+    # enumerate audio links so we can show the index number (1-based)
+    for idx, href in enumerate(audio_links, start=1):
         if href.startswith('http://') or href.startswith('https://'):
             file_url = href
         else:
@@ -52,8 +55,20 @@ def download_links(links, base_url, out_dir: Path, chunk_size: int = 256):
                 except Exception:
                     length = 0
 
-                expected = int(length / chunk_size) if length else None
-                for chunk in progress.bar(req.iter_content(chunk_size), expected_size=expected, label=filename + '  '):
+                # expected_size for the progress bar should be number of chunks
+                # but for user-friendly display show the size in MB
+                if length:
+                    # compute number of chunks (at least 1) for progress bar
+                    expected_chunks = max(1, int(length // chunk_size))
+                    size_mb = length / (1024 * 1024)
+                    size_display = f"{size_mb:.2f} MB"
+                else:
+                    expected_chunks = None
+                    size_display = 'Unknown size'
+
+                # label includes download icon, index, total and size in MB
+                label = f"⬇️  [{idx}/{total_audio}] {filename} ({size_display})"
+                for chunk in progress.bar(req.iter_content(chunk_size), expected_size=expected_chunks, label=label):
                     if chunk:
                         fh.write(chunk)
             success += 1
@@ -67,4 +82,3 @@ def download_links(links, base_url, out_dir: Path, chunk_size: int = 256):
             continue
 
     return total_audio, success, failed
-
