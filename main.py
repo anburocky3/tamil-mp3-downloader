@@ -22,6 +22,9 @@ from utils.helper import (
     count_audio_hrefs,
     parse_star_selection,
     ensure_emoji_spacing,
+    clear_screen,
+    print_banner,
+    clear_below_banner,
 )
 from utils.downloader import download_links
 
@@ -56,7 +59,7 @@ CATEGORIES = {
     '2': 'Music Director Hits',
     '3': 'Singer Hits',
     '4': 'Old Songs',
-    '5': 'Ring tones',
+    '5': 'Ring tones / Instrumentals',
     '6': 'By Genre',
 }
 
@@ -70,7 +73,9 @@ def goodbye_and_exit():
 
 
 def print_banner_and_menu():
-    print(BANNER_COLOR + BANNER + RESET)
+    # full clear then print banner
+    clear_screen()
+    print_banner(BANNER, BANNER_COLOR, RESET)
     print(MENU_COLOR + 'What would you like to download? (type the number; type "exit" to quit)' + RESET)
     # only display actual numbered categories
     for k, v in CATEGORIES.items():
@@ -82,6 +87,7 @@ def prompt_choice(prompt: str, default: str = '') -> str:
 
 
 def show_and_download(index_url: str, category_name: str, save_subpath_default: str):
+    clear_below_banner(BANNER, BANNER_COLOR, RESET)
     try:
         page = requests.get(index_url, timeout=30)
         page.raise_for_status()
@@ -124,7 +130,8 @@ def handle_data_category(data_file: str, category_name: str):
         print(ERROR_COLOR + f"Failed to load {data_file}: {e}" + RESET)
         return
 
-    # Display list
+    # Display list (clear below the banner so banner remains visible)
+    clear_below_banner(BANNER, BANNER_COLOR, RESET)
     print(MENU_COLOR + f"Available {category_name}:" + RESET)
     for item in data_list:
         print(f" {Fore.CYAN}{item.get('id')}{RESET}. {item.get('name')}")
@@ -138,6 +145,19 @@ def handle_data_category(data_file: str, category_name: str):
         return
     if sel.lower() in ('exit', '0', 'quit'):
         goodbye_and_exit()
+
+    # Special case: when viewing the Ringtones list, pressing '6' should open the
+    # prepopulated list from data/new-movies-ringtone.json
+    try:
+        if data_file.endswith('ringtones.json') and sel.strip() == '6':
+            # Delegate to the new-movies JSON file (drill-down)
+            new_file = 'data/new-movies-ringtone.json'
+            # Use a friendly category name when showing the nested list
+            handle_data_category(new_file, 'New Movies Ring Tone')
+            return
+    except Exception:
+        # ignore and continue with normal flow on unexpected errors
+        pass
 
     selected_items, missing = parse_star_selection(sel, data_list)
     for mid in missing:
@@ -180,10 +200,12 @@ def handle_old_songs():
       1 - Old Collections -> data/old/collections.json
       2 - Old Hits (Singers) -> data/old/singers.json
     """
+    clear_below_banner(BANNER, BANNER_COLOR, RESET)
     print(MENU_COLOR + "Old Songs - select a subcategory:" + RESET)
     print(f" {Fore.CYAN}1{RESET}. Old Collections")
     print(f" {Fore.CYAN}2{RESET}. Old Hits (Singers)")
     print(f" {Fore.CYAN}b{RESET}. Back to main menu")
+    print(f"")
 
     sel = prompt_choice("Enter choice (1-2, b/back): ")
     if not sel:
@@ -199,6 +221,38 @@ def handle_old_songs():
         handle_data_category('data/old/collections.json', 'Old Collections')
     elif sel_low == '2':
         handle_data_category('data/old/singers.json', 'Old Hits (Singers)')
+    else:
+        print(ERROR_COLOR + f"Invalid choice '{sel}', returning to menu." + RESET)
+
+
+def handle_ringtones_instrumentals():
+    """Submenu for Ringtones and Instrumental Collections.
+
+    Options:
+      1 - Ringtones -> data/ringtones.json
+      2 - Instrumentals -> data/instrumentals.json
+    """
+    clear_below_banner(BANNER, BANNER_COLOR, RESET)
+    print(MENU_COLOR + "Ring Tones / Instrumentals - select a subcategory:" + RESET)
+    print(f" {Fore.CYAN}1{RESET}. Ringtones")
+    print(f" {Fore.CYAN}2{RESET}. Instrumentals")
+    print(f" {Fore.CYAN}b{RESET}. Back to main menu")
+    print(f"")
+
+    sel = prompt_choice("Enter choice (1-2, b/back): ")
+    if not sel:
+        print(ERROR_COLOR + "No selection made, returning to menu." + RESET)
+        return
+    sel_low = sel.lower()
+    if sel_low in ('b', 'back'):
+        return
+    if sel_low in ('exit', '0', 'quit'):
+        goodbye_and_exit()
+
+    if sel_low == '1':
+        handle_data_category('data/ringtones.json', 'Ring Tones')
+    elif sel_low == '2':
+        handle_data_category('data/instrumentals.json', 'Instrumental Collections')
     else:
         print(ERROR_COLOR + f"Invalid choice '{sel}', returning to menu." + RESET)
 
@@ -231,6 +285,11 @@ def main():
         # Handle Old Songs subcategories
         if choice == '4':
             handle_old_songs()
+            continue
+
+        # Handle Ring tones / Instrumentals subcategories
+        if choice == '5':
+            handle_ringtones_instrumentals()
             continue
 
         # Generic flow for other categories

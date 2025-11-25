@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import re
 from typing import List, Tuple
+import os
+from typing import Optional
 
 
 def ensure_emoji_spacing(s: str) -> str:
@@ -99,3 +101,40 @@ def parse_star_selection(sel: str, star_data: List[dict]) -> Tuple[List[dict], L
 
     return selected_items, missing
 
+
+def clear_screen() -> None:
+    """Clear terminal screen in a cross-platform way (cls on Windows, clear on POSIX)."""
+    try:
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
+    except Exception:
+        # fallback
+        print('\n' * 3)
+
+
+def print_banner(banner: str, color_prefix: Optional[str] = '', reset: Optional[str] = '') -> None:
+    """Print the provided banner string, wrapped in optional color prefixes and reset.
+
+    The helper doesn't assume where the banner text comes from so the caller (main.py)
+    can pass `BANNER` and color constants.
+    """
+    try:
+        if color_prefix is None:
+            color_prefix = ''
+        if reset is None:
+            reset = ''
+        print(f"{color_prefix}{banner}{reset}")
+    except Exception:
+        # Last-resort: just print raw banner
+        try:
+            print(banner)
+        except Exception:
+            pass
+
+
+def clear_below_banner(banner: str, color_prefix: Optional[str] = '', reset: Optional[str] = '') -> None:
+    """Clear the terminal and re-print the banner so the banner stays visible below a cleared screen."""
+    clear_screen()
+    print_banner(banner, color_prefix, reset)
