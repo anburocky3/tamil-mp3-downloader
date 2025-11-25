@@ -38,7 +38,8 @@ BANNER = r'''
    | $$ /$$__  $$| $$ | $$ | $$| $$| $$      | $$\  $ | $$| $$       /$$  \ $$
    | $$|  $$$$$$$| $$ | $$ | $$| $$| $$      | $$ \/  | $$| $$      |  $$$$$$/
    |__/ \_______/|__/ |__/ |__/|__/|__/      |__/     |__/|__/       \______/ 
- Tamil MP3 Downloader - Author: Anbuselvan Rocky - v2.0.0
+ 
+       Tamil MP3 Downloader - Author: Anbuselvan Rocky - v2.0.0
 '''
 
 # Color choices
@@ -51,13 +52,12 @@ INFO_COLOR = Fore.MAGENTA
 RESET = Style.RESET_ALL
 
 CATEGORIES = {
-    '1': 'A-Z Movie Songs',
-    '2': 'Star Hits',
-    '3': 'Music Director Hits',
-    '4': 'Singer Hits',
-    '5': 'Karaoke',
-    '6': 'Ring tones',
-    '7': 'By Genre',
+    '1': 'Star Hits',
+    '2': 'Music Director Hits',
+    '3': 'Singer Hits',
+    '4': 'Old Songs',
+    '5': 'Ring tones',
+    '6': 'By Genre',
 }
 
 
@@ -173,6 +173,36 @@ def handle_data_category(data_file: str, category_name: str):
         show_and_download(index_url, category_name, user_path)
 
 
+def handle_old_songs():
+    """Show a small submenu for 'Old Songs' and delegate to handle_data_category.
+
+    Options:
+      1 - Old Collections -> data/old/collections.json
+      2 - Old Hits (Singers) -> data/old/singers.json
+    """
+    print(MENU_COLOR + "Old Songs - select a subcategory:" + RESET)
+    print(f" {Fore.CYAN}1{RESET}. Old Collections")
+    print(f" {Fore.CYAN}2{RESET}. Old Hits (Singers)")
+    print(f" {Fore.CYAN}b{RESET}. Back to main menu")
+
+    sel = prompt_choice("Enter choice (1-2, b/back): ")
+    if not sel:
+        print(ERROR_COLOR + "No selection made, returning to menu." + RESET)
+        return
+    sel_low = sel.lower()
+    if sel_low in ('b', 'back'):
+        return
+    if sel_low in ('exit', '0', 'quit'):
+        goodbye_and_exit()
+
+    if sel_low == '1':
+        handle_data_category('data/old/collections.json', 'Old Collections')
+    elif sel_low == '2':
+        handle_data_category('data/old/singers.json', 'Old Hits (Singers)')
+    else:
+        print(ERROR_COLOR + f"Invalid choice '{sel}', returning to menu." + RESET)
+
+
 def main():
     while True:
         # Show banner and menu, get a valid choice
@@ -187,15 +217,20 @@ def main():
         category_name = CATEGORIES[choice]
         print(INFO_COLOR + f"Selected: {category_name}\n" + RESET)
 
-        # Special flows for Star Hits (2), Music Director Hits (3) and Singer Hits (4)
-        if choice in ('2', '3', '4'):
+        # Special flows for Star Hits (1), Music Director Hits (2) and Singer Hits (3)
+        if choice in ('1', '2', '3'):
             mapping = {
-                '2': 'data/star-hits.json',
-                '3': 'data/music-directors-hits.json',
-                '4': 'data/singer-hits.json',
+                '1': 'data/star-hits.json',
+                '2': 'data/music-directors-hits.json',
+                '3': 'data/singer-hits.json',
             }
             data_file = mapping.get(choice)
             handle_data_category(data_file, category_name)
+            continue
+
+        # Handle Old Songs subcategories
+        if choice == '4':
+            handle_old_songs()
             continue
 
         # Generic flow for other categories
