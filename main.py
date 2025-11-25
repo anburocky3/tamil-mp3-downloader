@@ -25,6 +25,8 @@ from utils.helper import (
     clear_screen,
     print_banner,
     clear_below_banner,
+    format_terminal_link,
+    supports_terminal_links,
 )
 from utils.downloader import download_links
 
@@ -52,6 +54,7 @@ PROMPT_COLOR = Fore.GREEN + Style.BRIGHT
 SUCCESS_COLOR = Fore.GREEN
 ERROR_COLOR = Fore.RED
 INFO_COLOR = Fore.MAGENTA
+COMING_SOON_COLOR = Fore.MAGENTA + Style.DIM
 RESET = Style.RESET_ALL
 
 CATEGORIES = {
@@ -75,11 +78,26 @@ def goodbye_and_exit():
 def print_banner_and_menu():
     # full clear then print banner
     clear_screen()
-    print_banner(BANNER, BANNER_COLOR, RESET)
+    # Replace the author name with a clickable terminal link when supported
+    author_name = 'Anbuselvan Rocky'
+    github_url = 'https://github.com/anburocky3'
+    try:
+        if supports_terminal_links():
+            banner_to_print = BANNER.replace(author_name, format_terminal_link(author_name, github_url))
+        else:
+            banner_to_print = BANNER
+    except Exception:
+        banner_to_print = BANNER
+    print_banner(banner_to_print, BANNER_COLOR, RESET)
     print(MENU_COLOR + 'What would you like to download? (type the number; type "exit" to quit)' + RESET)
     # only display actual numbered categories
     for k, v in CATEGORIES.items():
-        print(f" {Fore.CYAN}{k}{RESET}. {v}")
+        # Present 'By Genre' (6) as coming soon so users know it's not implemented
+        if k == '6':
+            print(f" {Fore.CYAN}{k}{RESET}. {COMING_SOON_COLOR}{v} (Coming Soon){RESET}")
+        else:
+            print(f" {Fore.CYAN}{k}{RESET}. {v}")
+    print(f"")
 
 
 def prompt_choice(prompt: str, default: str = '') -> str:
@@ -136,6 +154,7 @@ def handle_data_category(data_file: str, category_name: str):
     for item in data_list:
         print(f" {Fore.CYAN}{item.get('id')}{RESET}. {item.get('name')}")
     print(f" {Fore.CYAN}all{RESET}. Download ALL entries")
+    print(f"")
 
     sel = prompt_choice("Select number(s)/ranges (e.g. 1,3,5 or 2-4) or 'all' (back/exit): ")
     if not sel:
@@ -290,6 +309,13 @@ def main():
         # Handle Ring tones / Instrumentals subcategories
         if choice == '5':
             handle_ringtones_instrumentals()
+            continue
+
+        # Handle By Genre as 'coming soon'
+        if choice == '6':
+            clear_below_banner(BANNER, BANNER_COLOR, RESET)
+            print(COMING_SOON_COLOR + '🚧  By Genre is coming soon. This feature is not implemented yet.' + RESET)
+            _ = prompt_choice('\nPress Enter to return to the main menu...')
             continue
 
         # Generic flow for other categories

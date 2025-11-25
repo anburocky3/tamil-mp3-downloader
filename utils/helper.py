@@ -138,3 +138,52 @@ def clear_below_banner(banner: str, color_prefix: Optional[str] = '', reset: Opt
     """Clear the terminal and re-print the banner so the banner stays visible below a cleared screen."""
     clear_screen()
     print_banner(banner, color_prefix, reset)
+
+
+def format_terminal_link(text: str, url: str) -> str:
+    """Return a terminal clickable link (OSC 8) if the terminal supports it.
+
+    Many modern terminals (iTerm2, Windows Terminal, GNOME Terminal, kitty) support
+    the OSC 8 sequence that wraps text as a clickable link. Older terminals (classic
+    cmd.exe) won't render it and will display the raw escape codes; the caller may
+    choose to fall back to printing the plain URL as well.
+
+    This function always returns the OSC 8 sequence; callers can decide to also
+    print the raw URL as fallback or open the URL in a browser when selected.
+    """
+    if not text or not url:
+        return text or url
+    # OSC 8 format: ESC ] 8 ;; URL ST  text  ESC ] 8 ;; ST
+    # ST can be either BEL (\a) or ESC backslash; use ESC backslash for portability
+    ESC = "\033"
+    OSC = f"{ESC}]8;;{url}{ESC}\\"
+    OSC_END = f"{ESC}]8;;{ESC}\\"
+    return f"{OSC}{text}{OSC_END}"
+
+
+def supports_terminal_links() -> bool:
+    """Heuristically determine whether the current terminal likely supports OSC 8 links.
+
+    This cannot be perfect. We look for known environment signals used by modern
+    terminals that support hyperlinks: Windows Terminal (WT_SESSION), iTerm2 (TERM_PROGRAM),
+    many xterm-like terminals via TERM, and the presence of COLORTERM. If unsure, return False.
+    """
+    try:
+        # Windows Terminal exposes WT_SESSION
+        if os.name == 'nt' and 'WT_SESSION' in os.environ:
+            return True
+        # iTerm2 exposes TERM_PROGRAM=Apple_Terminal or iTerm.app
+        term_program = os.environ.get('TERM_PROGRAM', '')
+        if term_program:
+            if 'iTerm' in term_program or 'Apple_Terminal' in term_program:
+                return True
+        # Common Unix TERM values that typically support OSC/ANSI sequences
+        term = os.environ.get('TERM', '')
+        if term and any(x in term.lower() for x in ('xterm', 'screen', 'tmux', 'rxvt', 'vt100', 'linux', 'konsole')):
+            return True
+        # Many terminal emulators set COLORTERM
+        if os.environ.get('COLORTERM'):
+            return True
+    except Exception:
+        return False
+    return False
