@@ -52,3 +52,9 @@ header a.links:hover {
 #documentation #developer-documentation li, #newbie-documentation li {
     padding-bottom: 10px;
 }
+
+@media screen and (max-width: 576px) {
+    #documentation {
+        padding: 20px !important;
+    }
+}
