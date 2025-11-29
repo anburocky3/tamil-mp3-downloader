@@ -1,0 +1,44 @@
+:root {
+    --primary: green;
+    --dark-gradient: linear-gradient(to bottom, #08203e, #103783);
+}
+
+body {
+    background: var(--dark-gradient) no-repeat;
+    /* height: 100vh; */
+    color: white;
+}
+
+header a.links:hover {
+    color: var(--primary) !important;
+}
+
+/* #hero section */
+#hero small {
+    margin-top: 5px;
+    font-size: 12px ;
+}
+
+/* #features */
+#features .features-wrapper {
+    max-width: 950px !important; 
+    margin: auto;
+}
+
+#features .feature-list{
+    padding: 20px;
+    border-radius: 5px;
+    transition: transform 0.6s ease;
+    
+}
+
+#features .feature-list p {
+    font-size: 13px;
+}
+
+#features .feature-list:hover{
+    background-color: #07235b;
+    cursor: pointer;
+    border: 1px solid #5b91ff;
+    transform: scale(1.1);
+}
