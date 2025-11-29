@@ -22,22 +22,31 @@
           <nav class="d-none d-sm-block">
             <ul class="d-flex align-items-center list-unstyled gap-4 m-0">
               <li class="">
-                <a href="#" class="text-white text-decoration-none links"
+                <a
+                  href="#features"
+                  class="text-white text-decoration-none links"
                   >Features</a
                 >
               </li>
               <li class="">
-                <a href="#" class="text-white text-decoration-none links"
+                <a
+                  href="#documentation"
+                  class="text-white text-decoration-none links"
                   >How it works?</a
                 >
               </li>
               <li class="">
-                <a href="#" class="text-white text-decoration-none links"
+                <a
+                  href="#documentation"
+                  class="text-white text-decoration-none links"
                   >How to Install?</a
                 >
               </li>
               <li class="">
-                <a href="#" class="text-white text-decoration-none links">
+                <a
+                  href="https://github.com/anburocky3/tamil-mp3-downloader"
+                  class="text-white text-decoration-none links"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -54,7 +63,9 @@
             </ul>
           </nav>
           <!-- Mobile only -->
-          <a href="#" class="btn btn-outline-success d-sm-none"
+          <a
+            href="https://github.com/anburocky3/tamil-mp3-downloader"
+            class="btn btn-outline-success d-sm-none"
             >How to Install?</a
           >
         </div>
@@ -76,7 +87,8 @@
           <span class="badge text-bg-info fw-medium">Old Hits</span>
         </div>
         <div class="mt-4">
-          <a href="#" class="btn btn-primary">Download now</a> <br />
+          <a href="#documentation" class="btn btn-primary">Download now</a>
+          <br />
           <small class="">Learn how it works?</small>
         </div>
       </section>
@@ -418,6 +430,113 @@
           </div>
         </div>
       </section>
+
+      <hr class="bg-dark mb-0" />
+
+      <!-- Documentation -->
+      <section id="documentation" class="pb-5">
+        <div class="row">
+          <div class="col col-md-4">
+            <div>
+              <h4>How to run this app?</h4>
+              <small>If you are developer, enable this</small>
+              <div class="mt-3">
+                <input type="checkbox" value="developer" id="developerToggle" />
+                <label for="developerToggle" class="form-label"
+                  >Developer Mode</label
+                >
+              </div>
+            </div>
+          </div>
+          <div class="col col-md-8">
+            <div id="developer-documentation" class="d-none">
+              <h4>🏗️ Build & run on your own!</h4>
+              <ul class="list-unstyled mt-3">
+                <li>
+                  1.
+                  <a
+                    href="https://github.com/anburocky3/tamil-mp3-downloader/fork"
+                    class="text-decoration-none text-info"
+                  >
+                    Fork this</a
+                  >
+                  and clone your project
+                </li>
+                <li>
+                  2. Open your terminal and run <br />
+                  <div class="my-1 bg-dark px-4 py-2 rounded w-75 text-info">
+                    git clone https://github.com/anburocky3/tamil-mp3-downloader
+                  </div>
+                  <small class="ms-3">
+                    replace <span class="text-info">`anburocky3`</span> with
+                    your github username.
+                  </small>
+                </li>
+                <li>
+                  3. Run python script like this:
+                  <div class="my-1 bg-dark px-4 py-2 rounded w-75 text-info">
+                    pip install -r requirements.txt
+                  </div>
+                  <div class="my-1 bg-dark px-4 py-2 rounded w-75 text-info">
+                    python main.py
+                  </div>
+
+                  <small class="ms-3"
+                    >Make sure you have
+                    <span class="text-info">Python 3.10+</span>
+                    installed.</small
+                  >
+                </li>
+              </ul>
+            </div>
+            <div id="newbie-documentation" class="">
+              <h4>⬇️ Download and run!</h4>
+              <ul class="list-unstyled">
+                <li>
+                  1. Download the
+                  <a
+                    href="https://github.com/anburocky3/tamil-mp3-downloader/releases/latest/download/tamil-mp3-downloader-v2.0.0.exe"
+                    class=""
+                    download
+                    >windows executable file and run it.</a
+                  >
+                </li>
+                <li>
+                  2. When you run, it will show you main menu
+                  <img
+                    src="https://raw.githubusercontent.com/anburocky3/tamil-mp3-downloader/main/screenshots/1.png"
+                    alt="Tamil MP3 Downloader by Anbu"
+                    class="img-fluid mt-3"
+                  />
+                </li>
+                <li>
+                  3. Choose your options accordingly, once it is downloaded, you
+                  can view it on <span class="text-info">/output/</span> folder
+                  <img
+                    src="https://raw.githubusercontent.com/anburocky3/tamil-mp3-downloader/main/screenshots/8.png"
+                    alt="Tamil MP3 Downloader by Anbu"
+                    class="img-fluid mt-3"
+                  />
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="text-center p-3">
+        <h5>
+          <a
+            href="https://github.com/anburocky3/tamil-mp3-downloader/fork"
+            class="text-success text-decoration-none"
+            >Github - Open Source</a
+          >
+        </h5>
+
+        We don't support piracy and this project is completely for educational
+        purposes only. Use it with care.🥰💖 |
+      </footer>
     </main>
 
     <!-- Bootstrap JS -->
@@ -426,5 +545,6 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+    <script src="./assets/js/main.js"></script>
   </body>
 </html>
