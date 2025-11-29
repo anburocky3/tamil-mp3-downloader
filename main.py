@@ -4,6 +4,7 @@ import requests
 from urllib.parse import unquote
 import sys
 import json
+import os
 
 # colorama init (cross-platform ANSI support)
 try:
@@ -44,7 +45,7 @@ BANNER = r'''
    | $$|  $$$$$$$| $$ | $$ | $$| $$| $$      | $$ \/  | $$| $$      |  $$$$$$/
    |__/ \_______/|__/ |__/ |__/|__/|__/      |__/     |__/|__/       \______/ 
  
-       Tamil MP3 Downloader - Author: Anbuselvan Rocky - v2.0.0
+       Tamil MP3 Downloader - Author: Anbuselvan Rocky
 '''
 
 # Color choices
@@ -75,19 +76,62 @@ def goodbye_and_exit():
     sys.exit(0)
 
 
+def get_resource_path(rel_path: str) -> str:
+    """Return an absolute path to a resource, working both when running from source
+    and when bundled by PyInstaller (where resources are extracted to sys._MEIPASS).
+
+    rel_path should be the path relative to the project root, for example: 'data/star-hits.json'
+    """
+    try:
+        # If running as a PyInstaller bundle, files are in sys._MEIPASS
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            base = sys._MEIPASS
+        else:
+            # Use the directory containing main.py as the project root
+            base = os.path.dirname(os.path.abspath(__file__))
+        # Normalize separators and join into a single relative path string
+        rel_normalized = rel_path.replace('/', os.sep).lstrip(os.sep)
+        return os.path.join(base, rel_normalized)
+    except Exception:
+        return rel_path
+
+
+def read_version() -> str:
+    """Read version string from VERSION file located at the project root (bundled via PyInstaller)."""
+    try:
+        vpath = get_resource_path('VERSION')
+        with open(vpath, 'r', encoding='utf-8') as vf:
+            ver = vf.read().strip()
+            if ver:
+                return ver
+    except Exception:
+        pass
+    return '0.0.0'
+
+
 def print_banner_and_menu():
     # full clear then print banner
     clear_screen()
     # Replace the author name with a clickable terminal link when supported
     author_name = 'Anbuselvan Rocky'
     github_url = 'https://github.com/anburocky3'
+    # Insert the version inline next to the author name inside the banner.
+    # Read runtime version first (fallback to 0.0.0 on error)
+    try:
+        version = read_version()
+    except Exception:
+        version = '0.0.0'
+
     try:
         if supports_terminal_links():
-            banner_to_print = BANNER.replace(author_name, format_terminal_link(author_name, github_url))
+            formatted_author = format_terminal_link(author_name, github_url)
+            banner_to_print = BANNER.replace(author_name, f"{formatted_author} - v{version}")
         else:
-            banner_to_print = BANNER
+            banner_to_print = BANNER.replace(author_name, f"{author_name} | v{version}")
     except Exception:
+        # On any error, fall back to the original banner without inline version
         banner_to_print = BANNER
+
     print_banner(banner_to_print, BANNER_COLOR, RESET)
     print(MENU_COLOR + 'What would you like to download? (type the number; type "exit" to quit)' + RESET)
     # only display actual numbered categories
@@ -142,7 +186,8 @@ def handle_data_category(data_file: str, category_name: str):
     category_name: top-level category used for output path
     """
     try:
-        with open(data_file, 'r', encoding='utf-8') as f:
+        data_path = get_resource_path(data_file)
+        with open(data_path, 'r', encoding='utf-8') as f:
             data_list = json.load(f)
     except Exception as e:
         print(ERROR_COLOR + f"Failed to load {data_file}: {e}" + RESET)

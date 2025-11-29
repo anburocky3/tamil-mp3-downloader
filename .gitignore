@@ -4,3 +4,23 @@
 /output
 /tools
 /__pycache__/
+
+# PyInstaller build folders
+build/
+dist/
+*.spec
+build_log.txt
+
+# Python packaging
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+
+# OS generated
+.DS_Store
+Thumbs.db
